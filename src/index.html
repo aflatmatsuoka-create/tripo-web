@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tripo Export</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <header>
+      <h1><img src="favicon.svg" alt=""> Tripo Export</h1>
+      <p>Paste a Tripo Studio link, see how the model was made, and download it in the format you want. Conversion runs in your browser.</p>
+    </header>
+
+    <section class="card">
+      <form id="loadForm">
+        <label for="url">Tripo project link or ID</label>
+        <div class="row">
+          <input id="url" type="text" placeholder="https://studio.tripo3d.ai/workspace/generate/…" autocomplete="off" spellcheck="false">
+          <button type="submit" class="primary">Load</button>
+        </div>
+        <details>
+          <summary>Private model?</summary>
+          <p class="muted">Public models need nothing. For a private one, log in at studio.tripo3d.ai, open DevTools → Network,
+            click any request to <code>api.tripo3d.ai</code> and copy the <code>authorization</code> header value here.
+            It's only sent to Tripo, never stored.</p>
+          <input id="token" type="password" placeholder="Bearer eyJ…" autocomplete="off">
+        </details>
+      </form>
+      <div id="drop" class="drop">
+        or drop a <b>.glb</b> file here / <label class="link">choose file<input id="file" type="file" accept=".glb,model/gltf-binary" hidden></label>
+      </div>
+    </section>
+
+    <section id="info" class="card" hidden>
+      <h2>How this model was made</h2>
+      <div class="info">
+        <table id="recipe"></table>
+        <div id="thumbs"></div>
+      </div>
+    </section>
+
+    <section id="exportCard" class="card" hidden>
+      <h2>Export</h2>
+      <fieldset class="formats">
+        <label><input type="checkbox" name="fmt" value="glb" checked> GLB <small>everything in one file</small></label>
+        <label><input type="checkbox" name="fmt" value="gltf"> glTF <small>.gltf + .bin + textures</small></label>
+        <label><input type="checkbox" name="fmt" value="obj" checked> OBJ <small>+ MTL + textures</small></label>
+        <label><input type="checkbox" name="fmt" value="stl"> STL <small>geometry only, 3D printing</small></label>
+        <label><input type="checkbox" name="fmt" value="3mf"> 3MF <small>3D printing, mm</small></label>
+        <label><input type="checkbox" name="fmt" value="usdz"> USDZ <small>Apple / AR</small></label>
+      </fieldset>
+      <div class="opts">
+        <label>Textures
+          <select id="texSize">
+            <option value="0">Original (4K)</option>
+            <option value="2048">2048 px</option>
+            <option value="1024">1024 px</option>
+            <option value="512">512 px</option>
+          </select>
+        </label>
+        <label>Scale (OBJ/STL/3MF) <input id="scale" type="number" value="1" step="any" min="0"></label>
+        <label>Save to
+          <select id="saveMode">
+            <option value="folder">A folder I pick</option>
+            <option value="zip">One .zip download</option>
+          </select>
+        </label>
+        <label class="check"><input id="extras" type="checkbox"> Also save input image, previews &amp; point cloud</label>
+      </div>
+      <button id="exportBtn" class="primary big">Export</button>
+      <p class="muted small">FBX and .blend need Blender, so they're only in the
+        <a href="https://github.com/freeAami/tripo-export" target="_blank" rel="noopener">command-line tool</a>.
+        A 2M-triangle OBJ is a few hundred MB, so give it a minute.</p>
+    </section>
+
+    <section class="card log">
+      <progress id="bar" max="1" value="0" hidden></progress>
+      <span id="barLabel" class="muted small"></span>
+      <ul id="log"></ul>
+    </section>
+
+    <footer class="muted small">
+      Shortcut: drag <a id="bookmarklet" class="pill">Tripo Export ↗</a> to your bookmarks bar, then click it on any Tripo project page.
+      · Uses the same public project API the Studio site uses; your files never leave your browser.
+    </footer>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
