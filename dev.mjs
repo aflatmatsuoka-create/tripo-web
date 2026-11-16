@@ -12,7 +12,7 @@ createServer(async (req, res) => {
   const url = new URL(req.url, `http://localhost:${port}`);
   try {
     if (url.pathname === '/api/proxy') {
-      const r = await proxy(new Request(url, { headers: req.headers }));
+      const r = await proxy(new Request(url, { method: req.method, headers: req.headers }));
       res.writeHead(r.status, Object.fromEntries(r.headers));
       if (r.body) Readable.fromWeb(r.body).pipe(res);
       else res.end();
@@ -26,4 +26,5 @@ createServer(async (req, res) => {
     res.writeHead(e.code === 'ENOENT' ? 404 : 500);
     res.end(String(e.message));
   }
-}).listen(port, () => console.log(`http://localhost:${port}`));
+}).listen(port, '127.0.0.1', () => console.log(`http://localhost:${port}`));
+

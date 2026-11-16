@@ -6,7 +6,8 @@
   "description": "Browser app: export Tripo Studio models to GLB, glTF, OBJ, STL, 3MF and USDZ, converted locally.",
   "scripts": {
     "build": "node build.mjs",
-    "dev": "node build.mjs && node dev.mjs"
+    "dev": "node build.mjs && node dev.mjs",
+    "test": "node --test test/*.test.mjs"
   },
   "dependencies": {
     "@gltf-transform/core": "^4.1.1",
