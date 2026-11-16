@@ -86,7 +86,7 @@ function showRecipe(project, stats) {
   const g = r?.generation_params || {};
   const rows = [];
   if (r) {
-    rows.push(['Name', `${r.name} <span class="muted">(${esc(r.visibility)}, by ${esc(r.owner)})</span>`]);
+    rows.push(['Name', `${esc(r.name)} <span class="muted">(${esc(r.visibility)}, by ${esc(r.owner)})</span>`]);
     rows.push(['Made with', `${esc(r.generator)} · Tripo ${esc(r.model_version)}`]);
     if (g.prompt) rows.push(['Prompt', esc(g.prompt)]);
     const keys = ['geometry_quality', 'texture_quality', 'face_limit', 'pbr', 'texture', 'quad', 'smart_poly', 'generate_parts', 'texture_alignment'];
@@ -111,7 +111,16 @@ async function inspect(bytes) {
   return describe(doc);
 }
 
+function resetModel() {
+  Object.assign(state, { project: null, source: null, stats: null, name: 'model' });
+  $('#exportCard').hidden = true;
+  $('#info').hidden = true;
+  $('#recipe').replaceChildren();
+  $('#thumbs').replaceChildren();
+}
+
 async function loadProject() {
+  resetModel();
   const input = $('#url').value.trim();
   if (!input) throw new Error('Paste a Tripo project link first.');
   const id = parseProjectId(input);
@@ -137,6 +146,7 @@ async function loadProject() {
 }
 
 async function loadFile(file) {
+  resetModel();
   $('#log').innerHTML = '';
   log(`Reading ${file.name}…`);
   const bytes = new Uint8Array(await file.arrayBuffer());
@@ -263,6 +273,7 @@ const WRITERS = {
 };
 
 async function runExport() {
+  if (!state.source) throw new Error('Load a model before exporting.');
   const formats = [...document.querySelectorAll('input[name=fmt]:checked')].map((e) => e.value);
   const extras = $('#extras').checked && state.project;
   if (!formats.length && !extras) throw new Error('Pick at least one format.');
@@ -332,3 +343,4 @@ if (initial) {
   $('#url').value = initial;
   busy(loadProject);
 }
+

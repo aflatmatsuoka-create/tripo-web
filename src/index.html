@@ -25,7 +25,7 @@
           <summary>Private model?</summary>
           <p class="muted">Public models need nothing. For a private one, log in at studio.tripo3d.ai, open DevTools → Network,
             click any request to <code>api.tripo3d.ai</code> and copy the <code>authorization</code> header value here.
-            It's only sent to Tripo, never stored.</p>
+            It passes through this site's Netlify proxy to the Tripo project API. This app does not save the token.</p>
           <input id="token" type="password" placeholder="Bearer eyJ…" autocomplete="off">
         </details>
       </form>
@@ -84,9 +84,10 @@
 
     <footer class="muted small">
       Shortcut: drag <a id="bookmarklet" class="pill">Tripo Export ↗</a> to your bookmarks bar, then click it on any Tripo project page.
-      · Uses the same public project API the Studio site uses; your files never leave your browser.
+      · Uses the same public project API the Studio site uses; local GLB conversion stays in your browser; Tripo downloads pass through this site’s Netlify proxy.
     </footer>
   </main>
   <script type="module" src="app.js"></script>
 </body>
 </html>
+

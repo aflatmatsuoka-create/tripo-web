@@ -99,8 +99,19 @@ export function imageSize(b) {
       o += 2 + dv.getUint16(o + 2);
     }
   }
-  if (b[8] === 0x57 && b[9] === 0x45 && b[12] === 0x56 && b[15] === 0x20) {
-    return { width: (dv.getUint16(26, true) & 0x3fff), height: (dv.getUint16(28, true) & 0x3fff) };
+  const tag = (o, t) => [...t].every((c, i) => b[o + i] === c.charCodeAt(0));
+  if (tag(0, 'RIFF') && tag(8, 'WEBP')) {
+    if (tag(12, 'VP8 ') && b.length >= 30 && b[23] === 0x9d && b[24] === 0x01 && b[25] === 0x2a) {
+      return { width: dv.getUint16(26, true) & 0x3fff, height: dv.getUint16(28, true) & 0x3fff };
+    }
+    if (tag(12, 'VP8L') && b.length >= 25 && b[20] === 0x2f) {
+      const bits = dv.getUint32(21, true);
+      return { width: (bits & 0x3fff) + 1, height: ((bits >>> 14) & 0x3fff) + 1 };
+    }
+    if (tag(12, 'VP8X') && b.length >= 30) {
+      const u24 = (o) => b[o] | (b[o + 1] << 8) | (b[o + 2] << 16);
+      return { width: u24(24) + 1, height: u24(27) + 1 };
+    }
   }
   return {};
 }
@@ -329,3 +340,4 @@ export function build3MF(doc, { scale = 1 } = {}) {
     '3D/3dmodel.model': model,
   }, { level: 6 });
 }
+
